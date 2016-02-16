@@ -96,4 +96,8 @@ default
 				break;
 		}
 	}
+	dataserver(key queryid, string data)
+	{
+		NameFixDataserver(queryid, data);
+	}
 }

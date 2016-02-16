@@ -7,13 +7,21 @@
 #define LOG_NAME_OFFSET 3
 
 list log = [];
+list nameFix = [];
+key nameFixQuery;
 
 AddLog(key id, integer type)
 {
 	log += id;
 	log += type;
 	log += llGetTimestamp();
-	log += llGetDisplayName(id) + " (" + llGetUsername(id) + ")";
+	string name = llGetDisplayName(id) + " (" + llGetUsername(id) + ")";
+	log += name;
+	if(name == " ()")
+	{
+		nameFix += llGetListLength(log)-1;
+		nameFixQuery = llRequestAgentData(id, DATA_NAME);
+	}
 }
 PresentLogChronological()
 {
@@ -114,4 +122,15 @@ ClearLog()
 	presentAgents = [];
 	llOwnerSay("Logs cleared");
 }
-
+NameFixDataserver(key queryid, string data)
+{
+	if(queryid == nameFixQuery)
+	{
+		integer index = llList2Integer(nameFix, 0);
+		log = llDeleteSubList(log, index, index);
+		log = llListInsertList(log, [data], index);
+		nameFix = llDeleteSubList(nameFix, 0, 0);
+		if(llGetListLength(nameFix) > 0)
+			nameFixQuery = llRequestAgentData(llList2Key(log, index - LOG_NAME_OFFSET), DATA_NAME);			
+	}
+}
