@@ -111,6 +111,7 @@ PresentLogByID(list recursion)
 ClearLog()
 {
 	log = [];
+	presentAgents = [];
 	llOwnerSay("Logs cleared");
 }
 
